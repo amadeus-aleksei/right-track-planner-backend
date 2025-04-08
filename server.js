@@ -3,8 +3,8 @@ const https = require('https');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
+// const helmet = require('helmet');
+// const morgan = require('morgan');
 const dotenv = require('dotenv');
 
 // Routes
@@ -20,7 +20,7 @@ dotenv.config({
 const app = express();
 
 // Middleware
-app.use(helmet());
+// app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {
     const allowedOrigins =
@@ -41,7 +41,7 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(morgan('combined'));
+// app.use(morgan('combined'));
 app.use(express.json());
 
 // Authentication middleware
@@ -93,8 +93,8 @@ async function startServer() {
     await connectDB();
     
     const options = {
-      key: fs.readFileSync('/ssl/key.pem'), // Hardcoded path since SSL paths are removed
-      cert: fs.readFileSync('/ssl/cert.pem')
+      key: fs.readFileSync('/certificates/key.pem'), // Hardcoded path since SSL paths are removed
+      cert: fs.readFileSync('/certificates/cert.pem')
     };
 
     https.createServer(options, app).listen(PORT, () => {

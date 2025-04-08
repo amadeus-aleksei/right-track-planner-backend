@@ -4,7 +4,7 @@ const listSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
+    // unique: true,
     lowercase: true
   },
   userId: {
@@ -12,7 +12,7 @@ const listSchema = new mongoose.Schema({
     required: true,
     ref: 'User'
   },
-  tasks: [{
+  items: [{
     name: {
       type: String,
       required: true
@@ -31,5 +31,8 @@ const listSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
+// Compound index ensures unique list names per user
+listSchema.index({ userId: 1, name: 1 }, { unique: true });
 
 module.exports = mongoose.model('List', listSchema);

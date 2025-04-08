@@ -6,6 +6,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+COPY certificates/key.pem /certificates/key.pem
+COPY certificates/cert.pem /certificates/cert.pem
 
 EXPOSE 443
 
