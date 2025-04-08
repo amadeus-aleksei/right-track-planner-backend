@@ -62,7 +62,7 @@ router.put('/lists/:listId/items/:itemId', auth, async (req, res) => {
     res.json(item);
   } catch (error) {
     res.status(400).json({ message: 'Error updating item', error: error.message });
- 
+  }
 });
 
 module.exports = router;
