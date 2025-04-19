@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const List = require('./models/List');
-const Item = require('./models/Item');
-const auth = require('./middleware/auth'); // Assuming you have auth middleware
+const List = require('../models/List');
+const Item = require('../models/Item');
+const auth = require('../middleware/auth'); // Assuming you have auth middleware
 
 // Get all lists for authenticated user
 router.get('/lists', auth, async (req, res) => {
   try {
     const lists = await List.find({ userId: req.user.id });
     res.json(lists);
-  } catch (error) {
+  }
+  catch (error) {
     res.status(500).json({ message: 'Server error fetching lists' });
   }
 });
@@ -34,7 +35,7 @@ router.post('/lists/:listId/items', auth, async (req, res) => {
   try {
     const list = await List.findOne({ _id: req.params.listId, userId: req.user.id });
     if (!list) return res.status(404).json({ message: 'List not found' });
-    
+
     const newItem = {
       name: req.body.name,
       completed: false,
@@ -53,10 +54,10 @@ router.put('/lists/:listId/items/:itemId', auth, async (req, res) => {
   try {
     const list = await List.findOne({ _id: req.params.listId, userId: req.user.id });
     if (!list) return res.status(404).json({ message: 'List not found' });
-    
+
     const item = list.items.id(req.params.itemId);
     if (!item) return res.status(404).json({ message: 'Item not found' });
-    
+
     item.completed = req.body.completed;
     await list.save();
     res.json(item);
