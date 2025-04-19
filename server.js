@@ -20,12 +20,14 @@ dotenv.config({
 const app = express();
 
 // Middleware
-// app.use(helmet());
-app.use(cors({
+const corsOptions = cors({
   origin: (origin, callback) => {
     const allowedOrigins =
       process.env.NODE_ENV === "development"
-        ? ["http://localhost:5173", "http://127.0.0.1:5173"]
+        ? [
+          "http://localhost:5173",
+          "http://127.0.0.1:5173"
+        ]
         : [
           "http://www.righttrackplanner.com",
           "https://www.righttrackplanner.com",
@@ -40,7 +42,10 @@ app.use(cors({
     }
   },
   credentials: true
-}));
+});
+
+// app.use(helmet());
+app.use(corsOptions);
 // app.use(morgan('combined'));
 app.use(express.json());
 
@@ -74,7 +79,7 @@ app.get('/health', (req, res) => {
 const connectDB = async () => {
   try {
     const dbURI = process.env.MONGO_URI;
-    
+
     await mongoose.connect(dbURI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -91,7 +96,7 @@ const PORT = process.env.PORT || 443;
 async function startServer() {
   try {
     await connectDB();
-    
+
     const options = {
       key: fs.readFileSync('/certificates/key.pem'), // Hardcoded path since SSL paths are removed
       cert: fs.readFileSync('/certificates/cert.pem')
