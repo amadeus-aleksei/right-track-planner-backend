@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const mongoose = require('mongoose');
@@ -97,15 +98,25 @@ async function startServer() {
   try {
     await connectDB();
 
-    const options = {
-      key: fs.readFileSync('/certificates/key.pem'), // Hardcoded path since SSL paths are removed
-      cert: fs.readFileSync('/certificates/cert.pem')
-    };
+    // For development without HTTPS
+    if (process.env.NODE_ENV === 'development') {
+      http.createServer(app).listen(PORT, () => {
+        console.log(`HTTP Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+      });
+    }
+    else {
+      // For production with HTTPS
+      const options = {
+        key: fs.readFileSync('/certificates/key.pem'),
+        cert: fs.readFileSync('/certificates/cert.pem')
+      };
 
-    https.createServer(options, app).listen(PORT, () => {
-      console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
-    });
-  } catch (error) {
+      https.createServer(options, app).listen(PORT, () => {
+        console.log(`HTTPS Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+      });
+    }
+  }
+  catch (error) {
     console.error('Server startup error:', error);
     process.exit(1);
   }
